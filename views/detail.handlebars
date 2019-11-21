@@ -1,0 +1,97 @@
+<style>
+    .checked {
+        color: #ffaa22
+    }
+
+    button:hover {
+        background-color: #ccc;
+    }
+</style>
+
+<div id="url-div" style="display: none;" data-url="{{url}}"></div>
+<div id="id-div" style="display: none;" data-id="{{id}}"></div>
+
+<div style="width: 100%; display: flex; flex-direction: row; justify-content: center;">
+    <div style="width: 100%; max-width: 400px; display: flex; flex-direction: column;">
+        <div style="margin-top: 20px; font-size: 1.4em; color: #222; font-weight: bold;">{{title}}</div>
+        <div style="margin-top: 20px; background-color: #efefef; width: 400px; height: 400px;">
+            <img class="main-img" style="width: 400px; height: 400px;" src='{{mainImageUrl}}' />
+        </div>
+        <div style="margin-top: 10px; display: flex; flex-direction: row; align-items: center; justify-content: flex-start;">
+            {{#each imageUrls}}
+                <div style="margin-right: 10px; background-color: #efefef; width: 65px; height: 65px;">
+                    <img class="img-thmb" style="margin-right: 10px; width: 65px; height: 65px;" src="{{this}}" data-src="{{this}}" />
+                </div>
+            {{/each}}
+        </div>
+        <div style="margin-top: 10px; color: #222;">
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span style="font-size: 0.8em;">(3.2 / 5 based on {{reviewCount}} reviews)</span>
+        </div>
+        <div style="font-size: 1.4em; color: #222; font-weight: bold;">Product Title</div>
+        <div style="display: flex; flex-direction: column; margin-top: 20px; justify-content: center;">
+            <div style="text-align: center; color: #222;">
+                <span style="font-size: 1em">
+                    <s>${{originalPrice}}</s>
+                </span>
+                <span style="font-size: 1.4em;">
+                    <b>${{price}}</b>
+                </span>
+            </div>
+            <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <button class="btn btn-default" style="width: 132px; border: 1px solid #222; border-radius: 0px; color: #222;">Buy Now</button>
+            </div>
+        </div>
+        <div style="color: #222; margin-top: 30px; text-align: center">
+            {{description}}
+        </div>
+        <div style="color: #222; margin-top: 30px; font-weight: bold; font-size: 1.4em;">
+            Customer Reviews
+        </div>
+        <div id="leave-review-div" style="text-align: center; margin-top: 30px;">
+            <button id="leave-review-btn" class="btn btn-default" style="width: 132px; border: 1px solid #222; border-radius: 0px; color: #222;">Leave a Review</button>
+        </div>
+        <div id="review-form-div" style="display: none; margin-top: 30px;">
+            <span id="star-btn-1" class="star-btn fa fa-star checked" data-index="1"></span>
+            <span id="star-btn-2" class="star-btn fa fa-star checked" data-index="2"></span>
+            <span id="star-btn-3" class="star-btn fa fa-star checked" data-index="3"></span>
+            <span id="star-btn-4" class="star-btn fa fa-star checked" data-index="4"></span>
+            <span id="star-btn-5" class="star-btn fa fa-star checked" data-index="5"></span>
+            <div class="form-group" style="margin-top: 10px;">
+                <input id="email-input" class="form-control" style="border-radius: 0px; border: 1px solid #222;" placeholder="Email" />
+            </div>
+            <div class="form-group">
+                <input id="name-input" class="form-control" style="border-radius: 0px; border: 1px solid #222;" placeholder="Name" />
+            </div>
+            <div class="form-group">
+                <textarea id="comment-input" class="form-control" style="border-radius: 0px; border: 1px solid #222;" rows="6" placeholder="Write review here"></textarea>
+            </div>
+            <div class="form-group text-right">
+                <button id="comment-btn" class="btn btn-default" style="border: 1px solid #222; border-radius: 0px; color: #222;">Post</button>
+            </div>
+        </div>
+        <div id="review-success-div" style="display: none; margin-top: 30px;">
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <div style="width: 132px; padding: 10px; background-color: #22a022; color: white; text-align: center; font-weight: bold; font-size: 1.2em">Review Submitted</div>
+            </div>
+        </div>
+        <div style="margin-top: 30px;">
+            {{#each comments}}
+                <hr>
+                <div><span style="font-size: 1.2em;">{{this.name}}</span> <span style="font-size: 0.8em">on {{this.timestamp}}</span></div>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star"></span>
+                <div>{{this.comment}}</div>
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+<script src="{{url}}/index.js"></script>
