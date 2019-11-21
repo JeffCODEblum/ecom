@@ -8,6 +8,12 @@ const mongoose = require('mongoose');
 const testData = require('./testData.js');
 const Moment = require ('moment');
 
+const hbs = exphbs.create({
+    helpers: {
+        eq: function (a, b) { return a === b },
+    }
+}); 
+
 mongoose.connect('mongodb://localhost/ecom', {useNewUrlParser: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -39,7 +45,7 @@ const ReviewModel = new mongoose.model('ReviewModel', ReviewSchema);
 app.use(express.static('public'))
 app.use(bodyParser.json());
 
-app.engine('handlebars', exphbs());
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 const APP_URL = 'http://localhost:4000';
@@ -178,15 +184,46 @@ app.get('/detail/:id', (req, res) => {
                     res.sendStatus(500);
                 }
                 if (docs) {
+                    let starAverage = 0;
                     const comments = docs.map(doc => {
+                        const arr = [];
+                        for (let i = 1; i <= 5; i++) {
+                            if (doc.stars >= i) {
+                                arr.push(true);
+                            }
+                            else {
+                                arr.push(false);
+                            }
+                        }
+                        starAverage += doc.stars;
                         return {
                             email: doc.email, 
                             name: doc.name, 
                             comment: doc.comment,
-                            stars: doc.stars,
+                            stars: arr,
                             timestamp: Moment(parseInt(doc.timestamp)).format('MMMM Do YYYY'),
                         }
                     });
+                    starAverage /= comments.length;
+                    const arr = [];
+                    for (let i = 1; i <= 5; i++) {
+                        // if (starAverage >= i) {
+                        //     arr.push(true);
+                        // }
+                        // else {
+                        //     arr.push(false);
+                        // }
+
+                        if (i < starAverage) {
+                            arr.push(1);
+                        }
+                        else if (i - 1 < starAverage && i > starAverage) {
+                            arr.push(0.5);
+                        }
+                        else if (i >= starAverage) {
+                            arr.push(0);
+                        }
+                    }
                     const context = { 
                         id: doc.id, 
                         title: doc.title, 
@@ -198,7 +235,9 @@ app.get('/detail/:id', (req, res) => {
                         price: doc.price,
                         originalPrice: doc.originalPrice,
                         comments: comments,
-                        reviewCount: comments.length
+                        reviewCount: comments.length,
+                        starAverage: starAverage.toFixed(1),
+                        stars: arr
                     };
                     res.render('detail', context);
                 }

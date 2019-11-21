@@ -25,14 +25,18 @@
             {{/each}}
         </div>
         <div style="margin-top: 10px; color: #222;">
-            <span class="fa fa-star checked"></span>
-            <span class="fa fa-star checked"></span>
-            <span class="fa fa-star checked"></span>
-            <span class="fa fa-star"></span>
-            <span class="fa fa-star"></span>
-            <span style="font-size: 0.8em;">(3.2 / 5 based on {{reviewCount}} reviews)</span>
+            {{#each stars}}
+                {{#if (eq this 1)}}
+                    <span class="fa fa-star checked"></span>
+                {{/if}}
+
+                {{#if (eq this 0.5)}}
+                    <span class="fa fa-star-half checked"></span>
+                {{/if}}
+            {{/each}}
+            <span style="font-size: 0.8em;">({{starAverage}} / 5 based on {{reviewCount}} reviews)</span>
         </div>
-        <div style="font-size: 1.4em; color: #222; font-weight: bold;">Product Title</div>
+        <div style="font-size: 1.4em; color: #222; font-weight: bold;">{{title}}</div>
         <div style="display: flex; flex-direction: column; margin-top: 20px; justify-content: center;">
             <div style="text-align: center; color: #222;">
                 <span style="font-size: 1em">
@@ -79,15 +83,22 @@
                 <div style="width: 132px; padding: 10px; background-color: #22a022; color: white; text-align: center; font-weight: bold; font-size: 1.2em">Review Submitted</div>
             </div>
         </div>
-        <div style="margin-top: 30px;">
+        <div style="margin-top: 30px; margin-bottom: 30px;">
             {{#each comments}}
                 <hr>
                 <div><span style="font-size: 1.2em;">{{this.name}}</span> <span style="font-size: 0.8em">on {{this.timestamp}}</span></div>
+                {{!-- <span class="fa fa-star checked"></span>
                 <span class="fa fa-star checked"></span>
                 <span class="fa fa-star checked"></span>
                 <span class="fa fa-star checked"></span>
-                <span class="fa fa-star checked"></span>
-                <span class="fa fa-star"></span>
+                <span class="fa fa-star"></span> --}}
+                {{#each this.stars}}
+                    {{#if this}}
+                        <span class="fa fa-star checked"></span>
+                    {{else}}
+                        <span class="fa fa-star"></span>
+                    {{/if}}
+                {{/each}}
                 <div>{{this.comment}}</div>
             {{/each}}
         </div>
