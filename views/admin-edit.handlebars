@@ -1,41 +1,48 @@
+<style>
+    .checked {
+        color: #ffaa22
+    }
+
+    button:hover {
+        background-color: #ccc;
+    }
+</style>
+
 <div id="url-div" style="display: none;" data-url="{{url}}"></div>
-<div class="container" style="max-width: 600px; background-color: #fff">
-    <h1>admin</h1>
+<div class="container" style="max-width: 400px; background-color: #fff; color: #333;">
     <div>
-        <h4> Edit  Item</h4>
+        <div style="margin-top: 10px; color: #333; font-size: 1.4em; font-weight: bold;">Edit  Item</div>
         <div id="id-div" style="display: none;" data-id="{{editItem.id}}"></div>
         <div class="form-group">
-            <label>title</label>
-            <input id="title-input" type="text" class="form-control" value="{{editItem.title}}" />
+            <label>Title</label>
+            <input id="title-input" type="text" class="form-control" value="{{editItem.title}}" style="border-radius: 0px;"/>
         </div>
 
         <div class="form-group">
-            <label>description</label>
-            <textarea rows="8" id="description-input" type="text" class="form-control">{{editItem.description}}</textarea>
+            <label>Original Price</label>
+            <input id="original-price-input" type="number" class="form-control" value="{{editItem.originalPrice}}" style="border-radius: 0px;" />
         </div>
 
         <div class="form-group">
-            <label>body</label>
-            <textarea rows="16" id="body-input" type="text" class="form-control">{{editItem.body}}</textarea>
+            <label>Price</label>
+            <input id="price-input" type="number" class="form-control" value="{{editItem.price}}" style="border-radius: 0px;" />
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <textarea rows="8" id="description-input" type="text" class="form-control" style="border-radius: 0px;">{{editItem.description}}</textarea>
         </div>
     </div>
 
-    <h4>Images</h4>
-    <div class="input-group">
+    <div style="color: #333; font-weight: bold; font-size: 1.4em;">Images</div>
+    <div class="form-group" style="margin-top: 10px;">
         <input id="file-input" type="file" name="file" data-id="{{editItem.id}}">
-        <button id="upload-btn" class="btn btn-sm btn-default" style="border: 1px #ccc solid">upload</button>
+    </div>
+    <div class="form-group">
+        <button id="upload-btn" class="btn btn-default" style="width: 70px; border: 1px #333 solid; border-radius: 0px; color: #333;">upload</button>
     </div>
 
     <label>Uploaded images</label>
-    {{!-- <div style="display: flex; flex-direction: row; justify-content: flex-start; align-items: center;">
-        {{#each editItem.imageUrls}}
-            <div style="margin: 5px">
-                <img src="{{../url}}/{{this}}" style="width: 70px; height: 70px;"/>
-                <button class="btn btn-sm btn-danger delete-img-btn" data-url="{{this}}">delete</button>
-                <button class="btn btn-sm btn-default shift-img-btn" data-url="{{this}}" style="border: 1px #ccc solid">shift</button>
-            </div>
-        {{/each}}   
-    </div> --}}
     <table class="table">
         <tr>
             <th>image</th>
@@ -45,37 +52,41 @@
             <tr>
                 <td><image src="{{../url}}/{{this}}" style="width: 70px; height: 70px" /></td>
                 <td>
-                    <button class="btn btn-sm btn-danger delete-img-btn" data-url="{{this}}">delete</button>
-                    <button class="btn btn-sm btn-default shift-img-btn" data-url="{{this}}" style="border: 1px #ccc solid">shift</button>
+                    <button class="btn btn-default shift-img-btn" data-url="{{this}}" style="width: 70px; border: 1px #333 solid; color: #333; border-radius: 0px;">shift</button>
+                    <button class="btn btn-danger delete-img-btn" data-url="{{this}}" style="margin-left: 5px; width: 70px; border: 1px; #333 solid; border-radius: 0px;">delete</button>
                 </td>
             </tr>
         {{/each}}
     </table>
 
-    <h4>Comments</h4>
-    <hr />
+    <div style="color: #333; font-size: 1.4em; font-weight: bold;">Customer Reviews</div>
     {{#each comments}}
-        <div>
-            <p>{{this.email}}</p>
-            <p>{{this.name}}</p>
-            <p>{{this.comment}}</p>
-            <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end;">
-                <p>{{this.timestamp}}</p>
-            </div>
+        <div style="color: #333">
+            <hr>
+            <div>{{this.email}}</div>
+            <div><span style="color: #333; font-size: 1.2em;">{{this.name}}</span> <span style="font-size: 0.8em">on {{this.timestamp}}</span></div>
+            {{#each this.stars}}
+                {{#if this}}
+                    <span class="fa fa-star checked"></span>
+                {{else}}
+                    <span class="fa fa-star"></span>
+                {{/if}}
+            {{/each}}
+            <div style="color: #333;">{{this.comment}}</div>
             <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end;">
                 {{#if this.hidden}}
-                    <button class="btn btn-sm btn-default show-comment-btn" data-id="{{this.id}}" style="border: 1px solid #ccc">show</button>
+                    <button class="btn btn-default show-comment-btn" data-id="{{this.id}}" style="width: 70px; border: 1px solid #333; color: #333; border-radius: 0px;">show</button>
                 {{else}}
-                    <button class="btn btn-sm btn-default hide-comment-btn" data-id="{{this.id}}" style="border: 1px solid #ccc">hide</button>
+                    <button class="btn btn-default hide-comment-btn" data-id="{{this.id}}" style="width: 70px; border: 1px solid #333; color: #333; border-radius: 0px;">hide</button>
                 {{/if}}
-                <button class="btn btn-sm btn-danger delete-comment-btn" data-id="{{this.id}}">delete</button>
+                <button class="btn btn-danger delete-comment-btn" style="width: 70px; border-radius: 0px; margin-left: 10px;" data-id="{{this.id}}">delete</button>
             </div>
         </div>
         <hr />
     {{/each}}
-    <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end">
-        <button class="btn btn-sm btn-default" style="border: 1px #ccc solid" id="cancel-btn">Cancel</button>
-        <button id="save-btn" class="btn btn-sm btn-primary">Save</button>
+    <div style="margin-bottom: 30px; width: 100%; display: flex; flex-direction: row; justify-content: flex-end">
+        <button class="btn btn-default" style="width: 70px; border: 1px #333 solid; color: #333; border-radius: 0px;" id="cancel-btn">Cancel</button>
+        <button id="save-btn" class="btn btn-default" style="width: 70px; margin-left: 10px; border-radius: 0px; border: 1px #333 solid; color: #fff; background-color: #333">Save</button>
     </div>
 </div>
 <script src="{{url}}/admin-edit.js"></script>

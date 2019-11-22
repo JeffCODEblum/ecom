@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const mongoose = require('mongoose');
 const testData = require('./testData.js');
+const testImageData = require('./imageData.js');
 const Moment = require ('moment');
 
 const hbs = exphbs.create({
@@ -81,7 +82,7 @@ ItemModel.find({}, (err, docs) => {
     }
     if (docs.length == 0) {
         for (let i = 0; i < data.items.length; i++) {
-            const img = data.images[i].replace(/^data:image\/\w+;base64,/, "");
+            const img = testImageData[0].replace(/^data:image\/\w+;base64,/, "");
             const buf = Buffer.from(img, 'base64');
             const fullpathname = '/uploads/' + Date.now() + '.png';
             fs.writeFile('./public' + fullpathname, buf, () => {
@@ -214,13 +215,13 @@ app.get('/detail/:id', (req, res) => {
                         //     arr.push(false);
                         // }
 
-                        if (i < starAverage) {
-                            arr.push(1);
-                        }
-                        else if (i - 1 < starAverage && i > starAverage) {
+                        if (i - 1 < starAverage && i > starAverage) {
                             arr.push(0.5);
                         }
-                        else if (i >= starAverage) {
+                        else if (i <= starAverage) {
+                            arr.push(1);
+                        }
+                        else if (i > starAverage) {
                             arr.push(0);
                         }
                     }
@@ -320,13 +321,22 @@ app.get('/admin/:id', (req, res) => {
                     }
                     if (doc) {
                         const comments = docs.map(doc => {
+                            const arr = [];
+                            for (let i = 1; i <= 5; i++) {
+                                if (doc.stars >= i) {
+                                    arr.push(true);
+                                }
+                                else {
+                                    arr.push(false);
+                                }
+                            }
                             return {
                                 id: doc._id,
                                 name: doc.name,
                                 email: doc.email,
                                 comment: doc.comment,
                                 hidden: doc.hidden,
-                                stars: doc.stars,
+                                stars: arr,
                                 timestamp: Moment(parseInt(doc.timestamp)).format('MMMM Do YYYY')
                             } 
                         });
