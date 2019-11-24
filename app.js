@@ -8,6 +8,14 @@ const mongoose = require('mongoose');
 const testData = require('./testData.js');
 const testImageData = require('./imageData.js');
 const Moment = require ('moment');
+const request = require('request');
+
+const PORT = require('./config.js').PORT;
+const APP_URL = require('./config.js').URL;
+
+const CLIENT_ID = 'AWNnO9vfj9F7ewnnxOUTu_gt1wPEPxG5zdN5NoI5gMhRZogtWCry6d3zqbe0Pqal8CGIR8xrVednL6I1';
+const SECRET = 'EDZtXPiqrl-gcnZNA1dtIxGeHmHAw4185VFRp8V2z8YScbDZRR4MDq3ZP3GdEbbWusvqamWPEJWjTU_f';
+var PAYPAL_API = 'https://api.sandbox.paypal.com';
 
 const hbs = exphbs.create({
     helpers: {
@@ -48,9 +56,6 @@ app.use(bodyParser.json());
 
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
-
-const APP_URL = 'http://localhost:4000';
-
 const data = testData;
 function authenticate(req, res, callback) {
     if (!req.headers.authorization) {
@@ -246,6 +251,77 @@ app.get('/detail/:id', (req, res) => {
         }
     });
     return;
+});
+
+app.post('/create-payment', (req, res) => {
+    var data = {
+        auth: {
+            user: CLIENT_ID,
+            pass: SECRET
+        },
+        body: {
+            intent: 'sale',
+            payer: {payment_method: 'paypal'},
+            transactions: [{
+                amount: {
+                    total: '1.99',
+                    currency: 'USD'
+                }
+            }],
+            redirect_urls: {
+                return_url: 'http://localhost:3000',
+                cancel_url: 'http://localhost:3000'
+            }
+        },
+        json: true
+    };
+
+    request.post(PAYPAL_API + '/v1/payments/payment', data, function(err, response) {
+        if (err) {
+            console.error(err);
+            return res.sendStatus(500);
+        }
+        if (response) {
+            console.log("create payment response", response);
+        }
+        res.json({
+            id: response.body.id
+        });
+    });
+});
+
+app.post('/execute-payment/', function(req, res) {
+    var paymentID = req.body.paymentID;
+    var payerID = req.body.payerID;
+    var data = {
+        auth: {
+            user: CLIENT_ID,
+            pass: SECRET
+        },
+        body: {
+            payer_id: payerID,
+            transactions: [{
+                amount: {
+                    total: '1.99',
+                    currency: 'USD'
+                }
+            }]
+        },
+        json: true
+    };
+
+    request.post(PAYPAL_API + '/v1/payments/payment/' + paymentID + '/execute', data, function(err, response) {
+        if (err) {
+          console.error(err);
+          return res.sendStatus(500);
+        }
+        if (response) {
+            console.log("execute payment response", response);
+        }
+        res.json({
+          status: 'success'
+        });
+    });
 });
 
 // login page
@@ -632,4 +708,4 @@ app.delete('/delete-post/:id', (req, res) => {
     return;
 });
 
-app.listen(4000);
+app.listen(PORT);

@@ -48,6 +48,9 @@
             <div style="display: flex; justify-content: center; margin-top: 10px;">
                 <button class="btn btn-default" style="width: 132px; border: 1px solid #333; border-radius: 0px; color: #222;">Buy Now</button>
             </div>
+            <div style="flex-direction: row; display: flex; justify-content: center; align-items: center; margin-top: 10px;">
+                <div id="paypal-button" style="width: 132px;"></div>
+            </div>
         </div>
         <div style="color: #333; margin-top: 30px; text-align: center">
             {{description}}
@@ -65,13 +68,13 @@
             <span id="star-btn-4" class="star-btn fa fa-star checked" data-index="4"></span>
             <span id="star-btn-5" class="star-btn fa fa-star checked" data-index="5"></span>
             <div class="form-group" style="margin-top: 10px;">
-                <input id="email-input" class="form-control" style="border-radius: 0px; border: 1px solid #333;" placeholder="Email" />
+                <input id="email-input" class="form-control" maxlength="48" style="border-radius: 0px; border: 1px solid #333;" placeholder="Email" />
             </div>
             <div class="form-group">
-                <input id="name-input" class="form-control" style="border-radius: 0px; border: 1px solid #333;" placeholder="Name" />
+                <input id="name-input" class="form-control" maxlength="16" style="border-radius: 0px; border: 1px solid #333;" placeholder="Name" />
             </div>
             <div class="form-group">
-                <textarea id="comment-input" class="form-control" style="border-radius: 0px; border: 1px solid #333;" rows="6" placeholder="Write review here"></textarea>
+                <textarea id="comment-input" maxlength="256" class="form-control" style="border-radius: 0px; border: 1px solid #333;" rows="6" placeholder="Write review here"></textarea>
             </div>
             <div class="form-group text-right">
                 <button id="comment-btn" class="btn btn-default" style="border: 1px solid #333; border-radius: 0px; color: #333;">Post</button>
@@ -100,3 +103,33 @@
 </div>
 
 <script src="{{url}}/index.js"></script>
+
+<script>
+    paypal.Button.render({
+    env: 'sandbox', // Or 'production'
+    payment: function(data, actions) {
+        console.log("calling create payment");
+        return actions.request.post('/create-payment/')
+        .then(function(res) {
+            console.log('returning id');
+            return res.id;
+        });
+    },
+    onAuthorize: function(data, actions) {
+        console.log("calling execute payment");
+        return actions.request.post('/execute-payment/', {
+        paymentID: data.paymentID,
+        payerID:   data.payerID
+        })
+        .then(function(res) {
+            console.log("transaction complete", res);
+            alert("transaction complete");
+        });
+    },
+    style: {
+        color: 'white',
+        shape: 'rect',
+        size: 'responsive'
+    }
+    }, '#paypal-button');
+</script>
